@@ -63,6 +63,16 @@ function loop() {
           bounce(c, ob)
           b.x += Math.cos(a)
           b.y += Math.sin(a)
+	  const minify = b => {
+	    const min = canvas.height / 40
+            const a = Math.atan2(b.vy, b.vx)
+	    if (b.vx * b.vx + b.vy * b.vy < min * min) {
+              b.vx = min * Math.cos(a)
+	      b.vy = min * Math.sin(a)
+	    }
+	  }
+	  minify(b)
+	  minify(c)
         }
       }
     }
