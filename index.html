@@ -1,0 +1,92 @@
+<canvas id="canvas"/>
+
+<script>
+function fitToContainer(canvas){
+  // Make it visually fill the positioned parent
+  canvas.style.width ='100%';
+  canvas.style.height='100%';
+  // ...then set the internal size to match
+  canvas.width  = canvas.offsetWidth;
+  canvas.height = canvas.offsetHeight;
+}
+const canvas = document.getElementById('canvas')
+fitToContainer(canvas)
+const ctx = canvas.getContext('2d')
+
+let balls = []
+let time = 0
+
+function loop() {
+  ctx.fillStyle = '#000'
+  ctx.fillRect(0, 0, canvas.width, canvas.height)
+  
+  if (time % 5 == 0) {
+  	const theta = Math.PI * 2 * Math.random()
+  	const spe = canvas.height / 40 + balls.length * balls.length / 200
+    const colors = [
+    	'#00f',
+      '#0f0',
+      '#0ff',
+      '#f00',
+      '#f0f',
+      '#ff0',
+      '#fff',
+    ]
+    balls.push({
+    	x: canvas.width / 2,
+      y: canvas.height / 2,
+      vx: spe * Math.cos(theta),
+      vy: spe * Math.sin(theta),
+      color: colors[Math.floor(Math.random() * colors.length)],
+      radius: canvas.height / 50,
+    })
+  }
+  
+  for (const b of [...balls]) {
+  	b.x += b.vx
+    b.y += b.vy
+    
+    for (const c of [...balls]) {
+      if (b != c) {
+        const dx = b.x - c.x
+        const dy = b.y - c.y
+        const a = Math.atan2(dy, dx)
+        const d = b.radius + c.radius
+        if (dx * dx + dy * dy < d * d) {
+          const bounce = (b, c) => {
+            b.vx = (-b.vx + c.vx) / 2
+            b.vy = (-b.vy + c.vy) / 2
+          }
+          const ob = {...b}
+          const oc = {...c}
+          bounce(b, oc)
+          bounce(c, ob)
+          b.x += Math.cos(a)
+          b.y += Math.sin(a)
+        }
+      }
+    }
+    
+    ctx.strokeStyle = b.color
+    ctx.beginPath();
+    ctx.arc(b.x, b.y, b.radius, 0, 2 * Math.PI);
+    ctx.stroke();
+    
+    const saveOrKill = (b, f) => {
+    	if (balls.length >= 100) {
+      	balls.splice(balls.indexOf(b), 1)
+      }else {
+      	f(b)
+      }
+    }
+    
+    if (b.x < 0 || b.x > canvas.width) saveOrKill(b, b => b.vx = -b.vx)
+    if (b.y < 0 || b.y > canvas.height) saveOrKill(b, b => b.vy = -b.vy)
+  }
+  
+  time++
+	window.requestAnimationFrame(loop)
+}
+loop()
+
+</script>
