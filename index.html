@@ -20,9 +20,9 @@ function loop() {
   ctx.fillStyle = '#000'
   ctx.fillRect(0, 0, canvas.width, canvas.height)
   
-  if (time % 5 == 0) {
+  if (time % 10 == 0) {
   	const theta = Math.PI * 2 * Math.random()
-  	const spe = canvas.height / 120 //+ balls.length * balls.length * canvas.height / 200 / 200
+  	const spe = canvas.height / 300 //+ balls.length * balls.length * canvas.height / 200 / 200
     const colors = [
     	'#00f',
       '#0f0',
